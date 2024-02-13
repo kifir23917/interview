@@ -11,7 +11,7 @@ import java.util.logging.Logger;
 import static java.nio.file.Files.newDirectoryStream;
 
 public class SolutionWithFixedThreadPool {
-    static Logger logger = Logger.getLogger(SolutionWithFixedThreadPool.class.getName());
+    private static final Logger logger = Logger.getLogger(SolutionWithFixedThreadPool.class.getName());
     private final ExecutorService executorService;
     private final Consumer<Path> fileProcessor;
 
@@ -36,7 +36,7 @@ public class SolutionWithFixedThreadPool {
                     for (final var entry : directoryStream) {
                         pathsToProcess.push(entry);
                     }
-                } catch (IOException e) {
+                } catch (final IOException e) {
                     logger.warning("newDirectoryStream(%s) method failed: %s".formatted(rootPath, e.getMessage()));
                 }
             } else {
@@ -54,17 +54,17 @@ public class SolutionWithFixedThreadPool {
         });
     }
 
-    private void waitFor(List<Future<Void>> futures) {
+    private void waitFor(final List<Future<Void>> futures) {
         for (final var futureToWait: futures) {
             try {
                 futureToWait.get();
-            } catch (InterruptedException | ExecutionException e) {
+            } catch (final InterruptedException | ExecutionException e) {
                 logger.warning("Exception on getting result from future: %s".formatted(e.getMessage()));
             }
         }
     }
 
-    private void validatePath(Path path) {
+    private void validatePath(final Path path) {
         if (!Files.exists(path)) {
             throw new RuntimeException("Path doesn't exists: %s".formatted(path));
         }

@@ -10,7 +10,7 @@ import java.util.logging.Logger;
 import static java.nio.file.Files.newDirectoryStream;
 
 public class SolutionWithForkJoinPool {
-    static Logger logger = Logger.getLogger(SolutionWithForkJoinPool.class.getName());
+    private static final Logger logger = Logger.getLogger(SolutionWithForkJoinPool.class.getName());
     private final Consumer<Path> fileProcessor;
 
     SolutionWithForkJoinPool(final Consumer<Path> fileProcessor) {
@@ -24,14 +24,13 @@ public class SolutionWithForkJoinPool {
         }
     }
 
-    private void validatePath(Path path) {
+    private void validatePath(final Path path) {
         if (!Files.exists(path)) {
             throw new RuntimeException("Path doesn't exists: %s".formatted(path));
         }
     }
 
     private static class EntryProcessingTask extends RecursiveTask<Void> {
-        static Logger logger = Logger.getLogger(EntryProcessingTask.class.getName());
         private final Path entryPath;
         private final Consumer<Path> fileProcessor;
 
@@ -52,7 +51,7 @@ public class SolutionWithForkJoinPool {
                         EntryProcessingTask subTask = new EntryProcessingTask(entry, fileProcessor);
                         subTask.fork();
                     }
-                } catch (IOException e) {
+                } catch (final IOException e) {
                     logger.warning("newDirectoryStream(%s) method failed: %s".formatted(entryPath, e.getMessage()));
                 }
 
